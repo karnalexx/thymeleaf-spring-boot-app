@@ -6,6 +6,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 
 @Entity
 public class User {
@@ -15,9 +17,11 @@ public class User {
 	private Long id;
 
 	@Column(unique = true, nullable = false)
+	@Size(min = 3, max = 15)
 	private String username;
 
 	@Column(nullable = false)
+	@Size(min = 3, max = 15)
 	private String password;
 
 	private String firstName;
@@ -85,5 +89,4 @@ public class User {
 	public void setRole(Role role) {
 		this.role = role;
 	}
-
 }
