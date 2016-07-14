@@ -1,11 +1,14 @@
 package org.example.controller;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.example.domain.Role;
 import org.example.domain.User;
 import org.example.repository.UserRepository;
+import org.example.repository.UserSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -45,5 +48,16 @@ public class UserController {
 		user.setRole(Role.USER);
 		userRepository.save(user);
 		return ResponseEntity.ok("{\"message\":\"User successfuly registered!\"}");
+	}
+		
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	public String search() {
+		return "search";
+	}
+		
+	@RequestMapping(value = "/search", method = RequestMethod.POST, produces = "application/json")
+	public @ResponseBody List<User> search(@RequestBody User user) {	
+		List<User> users = userRepository.findAll(new UserSpecification(user).matchUserFields());		
+		return users;
 	}
 }

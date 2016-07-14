@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Spring Security Thymeleaf Example</title>
+<link rel="stylesheet"
+	th:href="@{/webjars/bootstrap/3.3.6/css/bootstrap.min.css}" />
+<script th:src="@{/webjars/jquery/1.11.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/3.3.6/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/jquery.validate.min.js}"></script>
+
+<script>
+	$(document)
+			.ready(
+					function() {
+						$("#search_form")
+								.submit(
+										function(event) {
+											event.preventDefault();
+											var data = {};
+											$('input')
+													.each(
+															function(i) {
+																var input = $(this);
+																data[input
+																		.attr("name")] = input
+																		.val();																
+																delete data["undefined"];
+															});
+											var selectedRole = $('#role option:selected');
+											if (selectedRole.text() != '') {
+												data["role"] = selectedRole.text();
+											}
+											$.ajax({
+														url : "search",
+														type : 'POST',
+														dataType : 'json',
+														contentType : 'application/json',
+														mimeType : 'application/json',
+														data : JSON
+																.stringify(data),
+														success : function(data) {
+															var trHTML = '';
+															$
+																	.each(
+																			data,
+																			function(
+																					i,
+																					item) {
+																				trHTML += '<tr><td>'
+																						+ item.username
+																						+ '</td><td>'
+																						+ item.password
+																						+ '</td><td>'
+																						+ item.email
+																						+ '</td><td>'
+																						+ item.firstName
+																						+ '</td><td>'
+																						+ item.lastName
+																						+ '</td><td>'
+																						+ item.role
+																						+ '</td></tr>';
+																			});
+															$("#result")
+																	.empty();
+															$("#result")
+																	.append(
+																			'<table class="table table-bordered table-hover"><thead><tr><th>Username</th><th>Password</th><th>Email</th><th>First Name</th><th>Last Name</th><th>Role</th></tr></thead>'
+																					+ trHTML
+																					+ '</table>');
+														},
+														error : function(xhr,
+																status, error) {
+															var data = xhr.responseJSON;
+														}
+													});
+										});
+					});
+</script>
+</head>
+<body>
+	<div class="container">
+		<div class="page-header">
+			<h1>Search User</h1>
+			<div>
+				<a style="margin-bottom: 10px;" class="btn btn-info" role="button"
+					th:href="@{/logout}">Logout</a>
+			</div>
+		</div>
+
+		<div class="well">
+			<form id="search_form" role="form">
+				<div class="form-group">
+					<label for="username">Username:</label>
+					<div class="input-group">
+						<input type="text" path="username" name="username"
+							class="form-control" id="username" placeholder="Username" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="password">Password:</label>
+					<div class="input-group">
+						<input type="password" path="password" name="password"
+							class="form-control" id="password" placeholder="Password" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="email">Email:</label>
+					<div class="input-group">
+						<input type="email" name="email" path="email" class="form-control"
+							id="email" placeholder="Email" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="firstName">First Name:</label>
+					<div class="input-group">
+						<input type="text" name="firstName" path="firstName"
+							class="form-control" id="firstName" placeholder="First Name" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="lastName">Last Name:</label>
+					<div class="input-group">
+						<input type="text" name="lastName" path="lastName"
+							class="form-control" id="lastName" placeholder="Last Name" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="role">Role</label>
+					<div class="input-group"> 
+					<select class="form-control"
+						id="role" name="role">
+						<option></option>
+						<option>USER</option>
+						<option>ADMIN</option>
+					</select>
+					</div>
+				</div>
+				<div class="form-group">
+					<button id="search" type="submit" class="btn btn-default">Search</button>
+					<a class="btn btn-info" role="button" th:href="@{/users}">Users
+						List</a>
+				</div>
+
+			</form>
+		</div>
+
+		<div id="result"></div>
+	</div>
+</body>
+</html>
